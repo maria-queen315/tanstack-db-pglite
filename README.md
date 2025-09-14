@@ -1,6 +1,6 @@
 # tanstack-db-pglite
 
-A seamless integration between [TanStack DB](https://tanstack.com/db) and [PGLite](https://github.com/electric-sql/pglite) with [Drizzle ORM](https://orm.drizzle.team/) for browser-based database management, providing powerful collection management with automatic synchronization and offline-first capabilities.
+A seamless integration between [TanStack DB](https://tanstack.com/db) and [PGLite](https://github.com/electric-sql/pglite) with [Drizzle ORM](https://orm.drizzle.team/) for browser-based database management.
 
 ## Installation
 
