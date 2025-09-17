@@ -6,12 +6,15 @@ import type {
   SyncConfig,
   UpdateMutationFnParams,
 } from '@tanstack/db'
-import type { IndexColumn, PgTable } from 'drizzle-orm/pg-core'
+import type { IndexColumn, PgTable, PgTransaction } from 'drizzle-orm/pg-core'
 import type { PgliteDatabase } from 'drizzle-orm/pglite'
 import { eq, inArray } from 'drizzle-orm'
 import { createSelectSchema } from 'drizzle-zod'
 
-export function drizzleCollectionOptions<Table extends PgTable>({
+export function drizzleCollectionOptions<
+  Table extends PgTable,
+  SyncParams extends Parameters<SyncConfig<Table['$inferSelect'], string>['sync']>[0] = Parameters<SyncConfig<Table['$inferSelect'], string>['sync']>[0],
+>({
   startSync = true,
   ...config
 }: {
@@ -23,50 +26,30 @@ export function drizzleCollectionOptions<Table extends PgTable>({
   onUpdate?: (params: UpdateMutationFnParams<Table['$inferSelect'], string>) => Promise<void>
   onDelete?: (params: DeleteMutationFnParams<Table['$inferSelect'], string>) => Promise<void>
   startSync?: boolean
-  // eslint-disable-next-line ts/no-explicit-any
-  prepare?: () => Promise<any> | any
-  sync: (
-    params: Pick<
-      Parameters<SyncConfig<Table['$inferSelect'], string>['sync']>[0],
-      'write' | 'collection'
-    >
-  ) => Promise<void>
+  prepare?: () => Promise<unknown> | unknown
+  sync: (params: Pick<SyncParams, 'write' | 'collection'>) => Promise<void>
 }): CollectionConfig<Table['$inferSelect'], string> & {
   utils: {
     runSync: () => Promise<void>
   }
 } {
-  type SyncParams = Parameters<SyncConfig<Table['$inferSelect'], string>['sync']>[0]
-
   // Sync params can be null while running PGLite migrations
-  const { promise: syncParams, resolve: resolveSyncParams }
-    = Promise.withResolvers<SyncParams>()
+  const { promise: syncParams, resolve: resolveSyncParams } = Promise.withResolvers<SyncParams>()
 
-  async function runMutations(mutations: PendingMutation[]): Promise<void> {
-    const { begin, write, commit } = await syncParams
-    begin()
-    mutations.forEach((m) => {
-      write({ type: m.type, value: m.modified })
-    })
-    commit()
-  }
-
-  async function onDrizzleInsert(data: (typeof config.table.$inferInsert)[]): Promise<void> {
+  // eslint-disable-next-line ts/no-explicit-any
+  async function onDrizzleInsert(data: (typeof config.table.$inferInsert)[], tx?: PgTransaction<any, any, any>): Promise<void> {
     // @ts-expect-error drizzle types
-    await config.db.insert(config.table).values(data)
+    await (tx || config.db).insert(config.table).values(data)
   }
 
-  async function onDrizzleUpdate(id: string, changes: Partial<typeof config.table.$inferSelect>): Promise<void> {
-    await config.db
-      .update(config.table)
-      .set(changes)
-      .where(eq(config.primaryColumn, id))
+  // eslint-disable-next-line ts/no-explicit-any
+  async function onDrizzleUpdate(id: string, changes: Partial<typeof config.table.$inferSelect>, tx?: PgTransaction<any, any, any>): Promise<void> {
+    await (tx || config.db).update(config.table).set(changes).where(eq(config.primaryColumn, id))
   }
 
-  async function onDrizzleDelete(ids: string[]): Promise<void> {
-    await config.db
-      .delete(config.table)
-      .where(inArray(config.primaryColumn, ids))
+  // eslint-disable-next-line ts/no-explicit-any
+  async function onDrizzleDelete(ids: string[], tx?: PgTransaction<any, any, any>): Promise<void> {
+    await (tx || config.db).delete(config.table).where(inArray(config.primaryColumn, ids))
   }
 
   const getSyncParams = async (): Promise<Pick<SyncParams, 'write' | 'collection'>> => {
@@ -98,12 +81,22 @@ export function drizzleCollectionOptions<Table extends PgTable>({
     }
   }
 
+  // Mutations should run if everything is okay inside "on" handlers
+  async function runMutations(mutations: PendingMutation[]): Promise<void> {
+    const { begin, write, commit } = await syncParams
+    begin()
+    mutations.forEach((m) => {
+      write({ type: m.type, value: m.modified })
+    })
+    commit()
+  }
+
   return {
     startSync: true,
     sync: {
       sync: async (params) => {
         try {
-          resolveSyncParams(params)
+          resolveSyncParams(params as SyncParams)
           await config.prepare?.()
           params.begin()
           // @ts-expect-error drizzle types
@@ -124,29 +117,26 @@ export function drizzleCollectionOptions<Table extends PgTable>({
     gcTime: 0,
     schema: createSelectSchema(config.table),
     getKey: t => t[config.primaryColumn.name] as string,
-    onDelete: async (params) => {
-      await onDrizzleDelete(params.transaction.mutations.map(m => m.key))
-      const result = await config.onDelete?.(params)
-      await runMutations(params.transaction.mutations)
-      return result
-    },
     onInsert: async (params) => {
-      await onDrizzleInsert(
-        params.transaction.mutations.map(m => m.modified),
-      )
-      const result = await config.onInsert?.(params)
+      await config.db.transaction(async (tx) => {
+        await onDrizzleInsert(params.transaction.mutations.map(m => m.modified), tx)
+        await config.onInsert?.(params)
+      })
       await runMutations(params.transaction.mutations)
-      return result
     },
     onUpdate: async (params) => {
-      await Promise.all(
-        params.transaction.mutations.map(m =>
-          onDrizzleUpdate(m.key, m.changes),
-        ),
-      )
-      const result = await config.onUpdate?.(params)
+      await config.db.transaction(async (tx) => {
+        await Promise.all(params.transaction.mutations.map(m => onDrizzleUpdate(m.key, m.changes, tx)))
+        await config.onUpdate?.(params)
+      })
       await runMutations(params.transaction.mutations)
-      return result
+    },
+    onDelete: async (params) => {
+      await config.db.transaction(async (tx) => {
+        await onDrizzleDelete(params.transaction.mutations.map(m => m.key), tx)
+        await config.onDelete?.(params)
+      })
+      await runMutations(params.transaction.mutations)
     },
     utils: {
       runSync: async () => {
