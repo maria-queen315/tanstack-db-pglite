@@ -27,7 +27,7 @@ export function drizzleCollectionOptions<
   onDelete?: (params: DeleteMutationFnParams<Table['$inferSelect'], string>) => Promise<void>
   startSync?: boolean
   prepare?: () => Promise<unknown> | unknown
-  sync: (params: Pick<SyncParams, 'write' | 'collection'>) => Promise<void>
+  sync?: (params: Pick<SyncParams, 'write' | 'collection'>) => Promise<void>
 }): CollectionConfig<Table['$inferSelect'], string> & {
   utils: {
     runSync: () => Promise<void>
@@ -140,6 +140,10 @@ export function drizzleCollectionOptions<
     },
     utils: {
       runSync: async () => {
+        if (!config.sync) {
+          throw new Error('Sync is not defined')
+        }
+
         const params = await getSyncParams()
 
         // To wait the first sync
