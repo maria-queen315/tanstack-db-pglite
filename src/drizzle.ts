@@ -91,6 +91,23 @@ export function drizzleCollectionOptions<
     commit()
   }
 
+  /**
+   * https://github.com/drizzle-team/drizzle-orm/issues/1723
+   *
+   * Each query in the db using transaction will not be committed
+   * So I added this trick to select all changed data from the db
+   * Because after select, the transaction will be committed
+   *
+   * Yeah, it's stupid, but it works
+   */
+  async function finishTransaction(mutations: PendingMutation[]): Promise<void> {
+    await Promise.all(mutations.map(m => config.db
+      .select({ id: config.primaryColumn })
+      // @ts-expect-error drizzle types
+      .from(config.table)
+      .where(eq(config.primaryColumn, m.key))))
+  }
+
   return {
     startSync: true,
     sync: {
@@ -120,22 +137,31 @@ export function drizzleCollectionOptions<
     onInsert: async (params) => {
       await config.db.transaction(async (tx) => {
         await onDrizzleInsert(params.transaction.mutations.map(m => m.modified), tx)
-        await config.onInsert?.(params)
+        if (config.onInsert) {
+          await config.onInsert(params)
+        }
       })
+      await finishTransaction(params.transaction.mutations)
       await runMutations(params.transaction.mutations)
     },
     onUpdate: async (params) => {
       await config.db.transaction(async (tx) => {
         await Promise.all(params.transaction.mutations.map(m => onDrizzleUpdate(m.key, m.changes, tx)))
-        await config.onUpdate?.(params)
+        if (config.onUpdate) {
+          await config.onUpdate(params)
+        }
       })
+      await finishTransaction(params.transaction.mutations)
       await runMutations(params.transaction.mutations)
     },
     onDelete: async (params) => {
       await config.db.transaction(async (tx) => {
         await onDrizzleDelete(params.transaction.mutations.map(m => m.key), tx)
-        await config.onDelete?.(params)
+        if (config.onDelete) {
+          await config.onDelete(params)
+        }
       })
+      await finishTransaction(params.transaction.mutations)
       await runMutations(params.transaction.mutations)
     },
     utils: {
